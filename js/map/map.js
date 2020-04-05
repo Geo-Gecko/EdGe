@@ -1,6 +1,6 @@
 var map = L.map('map', {
   minZoom: 7.2
-}).setView([1.2, 32.24], 5);
+}).setView([0.5479, 33.2026], 11);
 
 
 function setParent(el, newParent) {
@@ -17,18 +17,32 @@ var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/
 // 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 // }).addTo(map);
 
-var geojsonMarkerOptions = {
-  radius: 2,
-  fillColor: "#07528B",
-  color: "#000",
-  weight: 0.6,
-  opacity: 1,
-  fillOpacity: 1
-};
+function getColor(LEVEL) {
+  switch (LEVEL) {
+    case 'pre_only':
+      return 'orange';
+    case 'primary_only':
+      return 'green';
+    case 'nursery_only':
+      return 'blue';
+    case 'preprimary_primary':
+      return '#962727';
+    case 'daycare_only':
+      return 'yellow';
+    default:
+      return 'white';
+  }
+}
 
-var schools_data = L.geoJson(schools_data, {
+var school_data = L.geoJson(school_data, {
   pointToLayer: function(feature, latlng) {
-    return L.circleMarker(latlng, geojsonMarkerOptions);
+    return new L.CircleMarker(latlng, {
+      radius: 5,
+      fillOpacity: 1,
+      color: 'black',
+      fillColor: getColor(feature.properties.LEVEL),
+      weight: 0.6,
+    });
   },
   onEachFeature: function(features, featureLayer) {
     featureLayer.bindPopup(features.properties.Name);
@@ -38,173 +52,77 @@ var schools_data = L.geoJson(schools_data, {
 
   }
 }).addTo(map);
-schools_data.eachLayer(function (layer) {
+school_data.eachLayer(function(layer) {
   layer.bindPopup('<strong>District:</strong> ' + layer.feature.properties.DName2019 + '<br>' + '<strong>SubCounty:</strong> ' + layer.feature.properties.Sub_county + '<br>' + '<strong>Name:</strong> ' + layer.feature.properties.school_name + '<br>' + '<strong>Level:</strong> ' + layer.feature.properties.LEVEL + '<br>' + '<strong>Type:</strong> ' + layer.feature.properties.type + '<br>' + '<strong>Sex:</strong> ' + layer.feature.properties.SEX);
-  layer.on('mouseover', function (e) {
-             this.openPopup();
-         });
-         layer.on('mouseout', function (e) {
-             this.closePopup();
-         });
+  layer.on('mouseover', function(e) {
+    this.openPopup();
+  });
+  layer.on('mouseout', function(e) {
+    this.closePopup();
+  });
 });
 
-
-	/**
-	   * Triggers the load of the spreadsheet and map creation
-	   */
-    var mapData;
-
-    $.ajax({
-      url: 'csv/Options.csv',
-      type: 'HEAD',
-      error: function () {
-        // Options.csv does not exist, so use Tabletop to fetch data from
-        // the Google sheet
-        mapData = Tabletop.init({
-          key: googleDocURL,
-          callback: function (data, mapData) { onMapDataLoad(); }
-        });
-      },
-      success: function () {
-        // Get all data from .csv files
-        mapData = Procsv;
-        mapData.load({
-          self: mapData,
-          tabs: ['Options', 'Points', 'Polygons', 'Polylines'],
-          callback: onMapDataLoad
-        });
-      }
+// district
+map.createPane('districtPane');
+map.getPane('districtPane').style.zIndex = 200;
+var jinja_subcounties = new L.GeoJSON(jinja_subcounties, {
+  pane: 'districtPane',
+  style: {
+    weight: 2,
+    opacity: 2,
+    color: '#4a4949',
+    fillOpacity: 2.5,
+    fillColor: '#ffffff00'
+  },
+  onEachFeature: function(feature, layer) {
+    layer.on('mouseover', function() {
+      this.setStyle({
+        weight: 2,
+        opacity: 2,
+        color: '#000000',
+        fillOpacity: 10,
+        fillColor: '#989898'
+      });
     });
-  
-
-// //adding the map
-// var map = L.map('map', {
-//   minZoom: 8
-// }).setView([-0.2, 29.24], 8);
-
-
-// function setParent(el, newParent) {
-//   newParent.appendChild(el);
-// }
-
-// var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-//   attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors © <a href="https://carto.com/attributions">CARTO</a>',
-//   subdomains: 'abcd',
-// }).addTo(map);
+    layer.on('mouseout', function() {
+      this.setStyle({
+        weight: 2,
+        opacity: 2,
+        color: '#4a4949',
+        fillOpacity: 2.5,
+        fillColor: '#ffffff00'
+      });
+    });
+  }
+}).addTo(map);
 
 
-// // add files from map folder to map1.html
-// ["povertyLandCMap", "mapPanes", "styleMap"].forEach(folder => {
-//   let hmap = document.createElement("script");
-//   hmap.setAttribute("type", "text/javascript");
-//   hmap.setAttribute("src", `js/map/${folder}.js`);
-//   document.body.appendChild(hmap)
-// })
 
-// // layer control
-// var povlegend = L.control({
-//   position: 'bottomright'
-// });
-// povlegend.onAdd = function(map) {
+/**
+   * Triggers the load of the spreadsheet and map creation
+   */
+  var mapData;
 
-//   var div = L.DomUtil.create('div', 'info legend'),
-//     povGrades = [0.11, 0.15, 0.18, 0.22, 0.8],
-//     povLabels = ['<strong>1 = Max Level of Poverty </strong> <br>'],
-//     from, to;
-
-//   for (var i = 0; i < povGrades.length; i++) {
-//     from = povGrades[i];
-//     to = povGrades[i + 1];
-
-//     povLabels.push(
-//       '<i style="background:' + getColorpoverty(from) + '"></i> ' +
-//       from + (to ? '&ndash;' + to : '+'));
-
-//   }
-
-//   div.innerHTML = povLabels.join('<br>');
-//   return div;
-// };
-
-// var denlegend = L.control({
-//   position: 'bottomright'
-// });
-
-// //layer control 2
-// var landlegend = L.control({
-//   position: 'bottomright'
-// });
-
-
-// denlegend.onAdd = function(map) {
-//   var div = L.DomUtil.create('div', 'info legend'),
-//     grades = [100, 200, 400, 9700],
-//     labels = ['<strong> People/Sqkm </strong><br>'],
-//     from, to;
-
-//   for (var i = 0; i < grades.length; i++) {
-//     from = grades[i];
-//     to = grades[i + 1];
-
-//     labels.push(
-//       '<i style="background:' + getColordensity(from) + '"></i> ' +
-//       from + (to ? '&ndash;' + to : '+'));;
-//   }
-
-//   div.innerHTML = labels.join('<br>');
-//   return div;
-// };
-
-// landlegend.onAdd = function(map) {
-//   var div = L.DomUtil.create('div', 'info legend');
-//   div.innerHTML +=
-//     '<img class= "landlegend" src="images/geoserver-GetLegendGraphic.png" alt="legend">';
-//   return div;
-// };
-
-// //Removing legend from the layer and adding the right one after the click event
-
-// map.on('baselayerchange', function(eventLayer) {
-
-//   function remover(legend) {
-//     if(legend._map) {
-//       map.removeControl(legend);
-//     }
-//   }
-
-//   remover(povlegend);
-//   remover(denlegend);
-//   remover(landlegend);
-
-//   if (eventLayer.name === 'Household Poverty Rates') {
-//     povlegend.addTo(map);
-
-//   } else if (eventLayer.name === 'Population Density') {
-//     denlegend.addTo(map);
-//   }
-//   else if (eventLayer.name === 'LandCover Classification') {
-//     landlegend.addTo(map);
-//   }
-// })
-
-// //leaflet legend containers
-// var legendFrom = $('.leaflet-top.leaflet-right');
-// var legendTo = $('#container1');
-// setParent(legendFrom[0], legendTo[0]);
-
-// function layer() {
-//   var layer = this;
-//   var name = layer.getGeoJSON().name;
-//   var item = filters.appendChild(document.createElement('div'));
-//   var checkbox = item.appendChild(document.createElement('input'));
-//   var label = item.appendChild(document.createElement('label'));
-//   checkbox.type = 'checkbox';
-//   checkbox.id = name;
-//   label.innerHTML = name;
-//   label.setAttribute('for', name);
-//   checkbox.addEventListener('change', update);
-
-//   function update() {
-//     (checkbox.checked) ? layer.addTo(map): map.removeLayer(layer);
-//   }
-// }
+  $.ajax({
+    url: "csv/Options.csv",
+    type: "HEAD",
+    error: function() {
+      // Options.csv does not exist, so use Tabletop to fetch data from
+      // the Google sheet
+      mapData = Tabletop.init({
+        key: googleDocURL,
+        callback: function(data, mapData) {
+          onMapDataLoad();
+        }
+      });
+    },
+    success: function() {
+      // Get all data from .csv files
+      mapData = Procsv;
+      mapData.load({
+        self: mapData,
+        tabs: ["Options", "Points", "Polygons", "Polylines"],
+        callback: onMapDataLoad
+      });
+    }
+  });

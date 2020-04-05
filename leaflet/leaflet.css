@@ -25,10 +25,6 @@
 	        user-select: none;
 	  -webkit-user-drag: none;
 	}
-/* Prevents IE11 from highlighting tiles in blue */
-.leaflet-tile::selection {
-	background: transparent;
-}
 /* Safari renders non-retina tile on retina better with this, but Chrome is worse */
 .leaflet-safari .leaflet-tile {
 	image-rendering: -webkit-optimize-contrast;
@@ -121,7 +117,6 @@
 
 .leaflet-control {
 	position: relative;
-	padding:0px 10px -1px 15px;
 	z-index: 800;
 	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
 	pointer-events: auto;
@@ -133,10 +128,10 @@
 	pointer-events: none;
 	}
 .leaflet-top {
-	top: -18px;
+	top: 0;
 	}
 .leaflet-right {
-	right: -37px;
+	right: 0;
 	}
 .leaflet-bottom {
 	bottom: 0;
@@ -149,22 +144,20 @@
 	clear: both;
 	}
 .leaflet-right .leaflet-control {
-	 float: left;
+	float: right;
 	}
 .leaflet-top .leaflet-control {
-	margin-top: 30px;
-    width: max-content;
-    left: 0px;
+	margin-top: 10px;
 	}
 .leaflet-bottom .leaflet-control {
-	margin-bottom: 42px;
+	margin-bottom: 10px;
 	}
 .leaflet-left .leaflet-control {
-	margin-left: 5500%;
+	margin-left: 10px;
 	}
-/* .leaflet-right .leaflet-control {
+.leaflet-right .leaflet-control {
 	margin-right: 10px;
-	} */
+	}
 
 
 /* zoom and fade animations */
@@ -244,8 +237,7 @@
 
 .leaflet-marker-icon.leaflet-interactive,
 .leaflet-image-layer.leaflet-interactive,
-.leaflet-pane > svg path.leaflet-interactive,
-svg.leaflet-image-layer.leaflet-interactive path {
+.leaflet-pane > svg path.leaflet-interactive {
 	pointer-events: visiblePainted; /* IE 9-10 doesn't have auto */
 	pointer-events: auto;
 	}
@@ -257,7 +249,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	outline: 0;
 	}
 .leaflet-container a {
-	color: #000000;
+	color: #0078A8;
 	}
 .leaflet-container a.leaflet-active {
 	outline: 2px solid orange;
@@ -270,7 +262,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 /* general typography */
 .leaflet-container {
-	/*font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;*/
+	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
 	}
 
 
@@ -334,7 +326,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 
 .leaflet-control-zoom-in,
 .leaflet-control-zoom-out {
-	font: bold 18px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: bold 18px 'Lucida Console', Monaco, monospace;
 	text-indent: 1px;
 	}
 
@@ -346,14 +338,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
 /* layers control */
 
 .leaflet-control-layers {
-    border-radius: 15px;
-    margin-top: 13px;
-    width: max-content;
-    padding: 0px 0px;
-    font-family:"Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 16px;
-    left:17px;
-    line-height: 2.428571;
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
 	}
 .leaflet-control-layers-toggle {
 	background-image: url(images/layers.png);
@@ -376,15 +363,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	display: block;
 	position: relative;
 	}
-.leaflet-control-layers-list {
-
-}
-/* .leaflet-control-layers-expanded {
-	padding: 6px 10px 6px -1px;
-    color: #333;
-    width: 96% !important;
-
-	} */
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
 .leaflet-control-layers-scrollbar {
 	overflow-y: scroll;
 	overflow-x: hidden;
@@ -395,32 +378,13 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	position: relative;
 	top: 1px;
 	}
-.leaflet-control-layers{
-	border-top: #333 1px solid;
-	border-top-right-radius: 0px;
-	border-top-left-radius: 0px;
-	margin: -15px;
-}
-
-.leaflet-control-layers-base{
-	width: 100%;
-	padding-left: 0px;
-	margin-right: 295px;
-}
-
-#leaflet-control-layers-base{
-	width: 100%;
-	padding-right: 80px;
-}
 .leaflet-control-layers label {
 	display: block;
-	margin-right: -58px;
-	margin-left: 15px;
 	}
 .leaflet-control-layers-separator {
-  height: 0;
-  border-top: 1px solid #333;
-  margin: 16px -0px 0px -25px;
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
 	}
 
 /* Default icon URLs */
@@ -487,7 +451,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	}
 .leaflet-touch .leaflet-control-layers,
 .leaflet-touch .leaflet-bar {
-	/*border: 2px solid rgba(0,0,0,0.2);*/
+	border: 2px solid rgba(0,0,0,0.2);
 	background-clip: padding-box;
 	}
 
@@ -547,7 +511,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	text-align: center;
 	width: 18px;
 	height: 14px;
-	font: 16px/14px "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font: 16px/14px Tahoma, Verdana, sans-serif;
 	color: #c3c3c3;
 	text-decoration: none;
 	font-weight: bold;
