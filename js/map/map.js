@@ -19,15 +19,15 @@ var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/
 
 function getColor(LEVEL) {
   switch (LEVEL) {
-    case 'pre_only':
+    case 'Day Care Centre and Nursery':
       return 'orange';
-    case 'primary_only':
+    case 'Primary only':
       return 'green';
-    case 'nursery_only':
+    case 'Nursery only':
       return 'blue';
-    case 'preprimary_primary':
+    case 'Pre-Primary and Primary':
       return '#962727';
-    case 'daycare_only':
+    case 'Day Care Centre only':
       return 'yellow';
     default:
       return 'white';
@@ -43,17 +43,17 @@ var school_data = L.geoJson(school_data, {
       fillColor: getColor(feature.properties.LEVEL),
       weight: 0.6,
     });
-  },
-  onEachFeature: function(features, featureLayer) {
-    featureLayer.bindPopup(features.properties.Name);
-    featureLayer.on('click', function(e) {
-      map.setView(e.latlng, 8)
-    });
-
   }
+  // onEachFeature: function(features, featureLayer) {
+  //   featureLayer.bindPopup(features.properties.Name);
+  //   featureLayer.on('click', function(e) {
+  //     map.setView(e.latlng, 8)
+  //   });
+  //
+  // }
 }).addTo(map);
 school_data.eachLayer(function(layer) {
-  layer.bindPopup('<strong>District:</strong> ' + layer.feature.properties.DName2019 + '<br>' + '<strong>SubCounty:</strong> ' + layer.feature.properties.Sub_county + '<br>' + '<strong>Name:</strong> ' + layer.feature.properties.school_name + '<br>' + '<strong>Level:</strong> ' + layer.feature.properties.LEVEL + '<br>' + '<strong>Type:</strong> ' + layer.feature.properties.type + '<br>' + '<strong>Sex:</strong> ' + layer.feature.properties.SEX);
+  layer.bindPopup('<strong>District:</strong> ' + layer.feature.properties.DName2019 + '<br>' + '<strong>SubCounty:</strong> ' + layer.feature.properties.Sub_county + '<br>' + '<strong>Name:</strong> ' + layer.feature.properties.school_name + '<br>' + '<strong>Level:</strong> ' + layer.feature.properties.LEVEL + '<br>' + '<strong>Type:</strong> ' + layer.feature.properties.schools_Type + '<br>' + '<strong>Sex:</strong> ' + layer.feature.properties.schools_Sex);
   layer.on('mouseover', function(e) {
     this.openPopup();
   });
@@ -95,34 +95,12 @@ var jinja_subcounties = new L.GeoJSON(jinja_subcounties, {
     });
   }
 }).addTo(map);
-
-
-
-/**
-   * Triggers the load of the spreadsheet and map creation
-   */
-  var mapData;
-
-  $.ajax({
-    url: "csv/Options.csv",
-    type: "HEAD",
-    error: function() {
-      // Options.csv does not exist, so use Tabletop to fetch data from
-      // the Google sheet
-      mapData = Tabletop.init({
-        key: googleDocURL,
-        callback: function(data, mapData) {
-          onMapDataLoad();
-        }
-      });
-    },
-    success: function() {
-      // Get all data from .csv files
-      mapData = Procsv;
-      mapData.load({
-        self: mapData,
-        tabs: ["Options", "Points", "Polygons", "Polylines"],
-        callback: onMapDataLoad
-      });
-    }
+jinja_subcounties.eachLayer(function(layer) {
+  layer.bindPopup('<strong>SubCounty:</strong> ' + layer.feature.properties.Subcounty);
+  layer.on('mouseover', function(e) {
+    this.openPopup();
   });
+  layer.on('mouseout', function(e) {
+    this.closePopup();
+  });
+});
