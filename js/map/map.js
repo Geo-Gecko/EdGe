@@ -60,6 +60,10 @@ school_data.eachLayer(function(layer) {
   layer.on('mouseout', function(e) {
     this.closePopup();
   });
+  layer.on('click', function(e) {
+    var layer = e.target;
+    info.update(layer.feature.properties);
+  })
 });
 
 // district
