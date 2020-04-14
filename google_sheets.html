@@ -15,7 +15,7 @@ gid at the end of the url is the particular sheet you want...it changes if you s
     let url = `https://docs.google.com/spreadsheets/d/${long_id}/export?format=csv&id=${long_id}&gid=251717838`
     axios.get(url, { mode: 'no-cors' })
         .then(r => {
-             console.log(r.data)
+            // console.log(r.data)
             data = $.csv.toObjects(r.data)
             console.log(data)
         })
